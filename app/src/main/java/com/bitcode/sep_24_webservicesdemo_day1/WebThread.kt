@@ -24,7 +24,6 @@ class WebThread : Thread() {
         Log.e("tag", "----------------------------------------")
         Log.e("tag", inStream.toString())
 
-
         var buffer = StringBuffer()
         var data = ByteArray(1024 * 1)
         var count = 0
@@ -34,10 +33,10 @@ class WebThread : Thread() {
             buffer.append(String(data, 0 , count))
             count = inStream.read(data)
         }
+
         inStream.close()
         Log.e("tag", "----------------------------------------")
         Log.e("tag",buffer.toString())
-
 
         var responseObject = JSONObject(buffer.toString())
         var successValue = responseObject.getBoolean("success")
@@ -46,10 +45,24 @@ class WebThread : Thread() {
         var offset = responseObject.getInt("offset")
         var limit = responseObject.getInt("limit")
 
+        var photos : ArrayList<Photo> = ArrayList<Photo>()
 
         var photosArray = responseObject.getJSONArray("photos")
-        for (i in photosArray.length()-1){
 
+        for (i in 0..<photosArray.length()-1){
+            val eachPhotoObject = photosArray.getJSONObject(i)
+            var eachPhotoUrl = eachPhotoObject.getString("url")
+            var eachPhotoTitle = eachPhotoObject.getString("title")
+            var eachPhotoUser = eachPhotoObject.getInt("user")
+            var eachPhotoDescription = eachPhotoObject.getString("description")
+            var eachPhotoId = eachPhotoObject.getInt("id")
+
+            val newPhotoObject = Photo(eachPhotoUrl,
+                                            eachPhotoTitle,
+                                            eachPhotoUser,
+                                            eachPhotoDescription,
+                                            eachPhotoId)
+            photos.add(newPhotoObject)
         }
     }
 }
